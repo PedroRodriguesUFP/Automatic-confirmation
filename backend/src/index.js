@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import appointmentRoutes from './routes/appointments.js'
 import webhookRoutes from './routes/webhook.js'
 import businessRoutes from './routes/business.js'
+import './jobs/reminderJob.js'
 
 dotenv.config()
 
