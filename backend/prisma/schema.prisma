@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id           String        @id @default(uuid())
+  name         String
+  phone        String        @unique
+  email        String        @unique
+  slug         String        @unique   // ex: "joao-barbeiro" para autoflow.pt/joao-barbeiro
+  services     String[]      // ["Corte", "Barba", "Corte + Barba"]
+  workingHours Json          // { "mon": ["09:00","18:00"], ... }
+  createdAt    DateTime      @default(now())
+  appointments Appointment[]
+  messages     Message[]
+}
+
+model Appointment {
+  id           String   @id @default(uuid())
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id])
+  clientName   String
+  clientPhone  String
+  service      String
+  date         DateTime
+  status       String   @default("confirmed") // confirmed | cancelled | completed
+  reminderSent Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+  from       String   // número de telefone
+  body       String
+  direction  String   // "inbound" | "outbound"
+  createdAt  DateTime @default(now())
+}
